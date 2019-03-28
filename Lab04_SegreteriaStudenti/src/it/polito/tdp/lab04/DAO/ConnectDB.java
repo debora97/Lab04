@@ -5,14 +5,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectDB {
+	//ha un metodo ctatiche che rimanda al chiamante 
 
-	static private final String jdbcUrl = "jdbc:mysql://localhost/iscritticorsi?user=root";
+	static private final String jdbcUrl = "jdbc:mysql://localhost/iscritticorsi?user=root&password=237068";
 	static private Connection connection = null;
 
 	public static Connection getConnection() {
 
 		try {
-			if (connection == null) {
+			if (connection == null || connection.isClosed()) {
 				connection = DriverManager.getConnection(jdbcUrl);
 			}
 			return connection;

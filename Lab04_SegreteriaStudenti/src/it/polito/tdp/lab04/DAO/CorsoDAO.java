@@ -22,10 +22,11 @@ public class CorsoDAO {
 		List<Corso> corsi = new LinkedList<Corso>();
 
 		try {
-			Connection conn = ConnectDB.getConnection();
+			Connection conn = ConnectDB.getConnection(); //devi fare la classe connection 
 			PreparedStatement st = conn.prepareStatement(sql);
 
-			ResultSet rs = st.executeQuery();
+			ResultSet rs = st.executeQuery(); //qui ho i risultati della query che ho fatto
+			
 
 			while (rs.next()) {
 
@@ -34,13 +35,18 @@ public class CorsoDAO {
 				String nome = rs.getString("nome");
 				int periodoDidattico = rs.getInt("pd");
 
-				System.out.println(codins + " " + numeroCrediti + " " + nome + " " + periodoDidattico);
+			//	System.out.println(codins + " " + numeroCrediti + " " + nome + " " + periodoDidattico);
 
 				// Crea un nuovo JAVA Bean Corso
 				// Aggiungi il nuovo oggetto Corso alla lista corsi
+				Corso c= new Corso(rs.getNString("codins"), rs.getInt("crediti"), rs.getString("nome"), rs.getInt("pd"));
+				corsi.add(c);
 			}
+			rs.close();
+			conn.close();
 
 			return corsi;
+			
 
 		} catch (SQLException e) {
 			// e.printStackTrace();
@@ -51,8 +57,13 @@ public class CorsoDAO {
 	/*
 	 * Dato un codice insegnamento, ottengo il corso
 	 */
-	public void getCorso(Corso corso) {
-		// TODO
+	public Corso getCorso(String nome) {
+		for(Corso c: this.getTuttiICorsi()) {
+			if(c.getCodins().equals(nome)) {
+				return c;
+			}
+			
+		}return null;
 	}
 
 	/*
@@ -69,5 +80,33 @@ public class CorsoDAO {
 		// TODO
 		// ritorna true se l'iscrizione e' avvenuta con successo
 		return false;
+	}
+	public List<Corso> corsiFreq(int matricola) {
+		final String sql = "SELECT DISTINCT corso.* \n" + 
+				"FROM studente,iscrizione,corso \n" + 
+				"WHERE  studente.matricola=iscrizione.matricola AND corso.codins=iscrizione.codins AND studente.matricola=?";
+
+		 List<Corso> corsiF = new LinkedList<Corso>();
+
+		try {
+			Connection conn = ConnectDB.getConnection(); // devi fare la classe connection
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, matricola);
+
+			ResultSet rs = st.executeQuery(); // qui ho i risultati della query che ho fatto
+
+			while (rs.next()) {
+				Corso c= new Corso(rs.getNString("codins"), rs.getInt("crediti"), rs.getString("nome"), rs.getInt("pd"));
+				corsiF.add(c);
+				
+			}
+			conn.close();
+			return corsiF;
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+
 	}
 }
