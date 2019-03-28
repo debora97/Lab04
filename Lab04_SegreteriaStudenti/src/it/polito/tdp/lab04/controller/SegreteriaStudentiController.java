@@ -94,7 +94,7 @@ public class SegreteriaStudentiController {
 			} // 3 se la matricola non frequenta
 			if (corsiFreq == null) {
 				txtCorsi.clear();
-				txtCorsi.appendText("la matricola selezionata non è iscritta a nessuno dei corso ");
+				txtCorsi.appendText("la matricola selezionata non è iscritta a nessun corso ");
 			}
 
 		}
